@@ -44,6 +44,7 @@ void loadFile(char charArr[ROWS][COLS]) {
         while(fileArt >> fRow >> fCol >> fChar){
             charArr[fRow][fCol] = fChar;
         }
+        cout << "Done" << endl;
     }
     else{
         cout << "File does not exist." << endl;
@@ -78,6 +79,18 @@ void clearArray(char charArr[ROWS][COLS]){
             charArr[r][c] = ' ';
         }
     }
+}
+
+bool isFileLoaded(char charArr[ROWS][COLS]){
+    //Checks if a file is loaded into the charArr by checking whether the file is fully empty or not
+    for (int r = 0; r < ROWS; r++){
+        for (int c = 0; c < COLS; c++){
+            if (charArr[r][c] != ' '){
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 bool guessChange(char copyArr[ROWS][COLS]){
@@ -123,17 +136,36 @@ int main(){
         cout << "4. Exit" << endl;
         cin >> command; //command input
         
-        //input validation for command input
-        while (command < 1 || command > 4){
-            cout << "What would you like to do?" << endl;
-            cout << "1. Load ASCII Art from File" << endl;
-            cout << "2. Display Art" << endl;
-            cout << "3. Play Game" << endl;
-            cout << "4. Exit" << endl;
-            cin >> command;
+        //switch statement for handling input command logic.
+        switch (command){
+            case 1: //Load a file into the charArr
+                clearArray(charArr); //ensure array is empty before loading a new file.
+                loadFile(charArr);
+                break;
+            case 2: //displays the loaded file on a coordinate grid
+                if (isFileLoaded(charArr)){
+                    displayArt(charArr);
+                }
+                else{
+                    cout << "No file loaded." << endl;
+                }
+                break;
+            case 3: //begins the process the play the game of 'Spot-the-Difference'
+                if (isFileLoaded(charArr)){
+                    playGame(charArr);
+                    clearArray(charArr); //clear the array after the game is over to load a new one in. 
+                }
+                else{
+                    cout << "No file loaded." << endl;
+                }
+                break;
+            case 4: //exit program
+                isRunning = false;
+                break;
+                
+            default: //input validation
+                break;
         }
-
-        //SWITCH STATEMENT FOR HANDLING COMMAND INPUT HERE
     }
 
     return 0;
