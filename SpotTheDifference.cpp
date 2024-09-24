@@ -20,8 +20,7 @@ The player must guess the correct row and column of the changed character to win
 using namespace std;
 
 //Global Constants: Rows and Columns of the ASCII Art 
-const int ROWS = 10;
-const int COLS = 21;
+const int ROWS = 10, COLS = 21;
 
 void loadFile(char charArr[ROWS][COLS]) {
 /*
@@ -35,8 +34,7 @@ void loadFile(char charArr[ROWS][COLS]) {
     cin >> fileName;
     ifstream fileArt(fileName);
 
-    int fRow;
-    int fCol;
+    int fRow, fCol;
     char fChar;
 
     //opening and processing file into the character array
@@ -93,15 +91,35 @@ bool isFileLoaded(char charArr[ROWS][COLS]){
     return false;
 }
 
-bool guessChange(char copyArr[ROWS][COLS]){
+bool isGuessRight(char origArr[ROWS][COLS], char copyArr[ROWS][COLS]){
 /*
 -takes the duplicated array with a difference as the parameter
 -Asks user to guess the row the changed character is in
 -Then asks for the column
 -prints message that says if they guessed correctly or not.
-
 -Return T/F for whether the user guessed the correct coordinate
 */
+    int r, c; 
+    cout << "Guess the row of the changed character" << endl;
+    cin >> r;
+    cout << "Guess the column of the changed character" << endl;
+    cin >> c;
+
+    //input validation
+    while (r < 0 || r >= ROWS || c < 0 || c >= COLS){
+        cout << "invalid input for row and/or column" << endl;
+        cout << "Guess the row of the changed character" << endl;
+        cin >> r;
+        cout << "Guess the column of the changed character" << endl;
+        cin >> c;
+    }
+
+    //checking the guessed character with the character from the orginal array
+    //If the characters are different, then it was the changed character. 
+    if(copyArr[r][c] != origArr[r][c]){
+        return true;
+    }
+    return false;
 }
 
 void playGame(char charArr[ROWS][COLS]){
@@ -167,7 +185,6 @@ int main(){
                 break;
         }
     }
-
     return 0;
 }
 
