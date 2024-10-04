@@ -1,9 +1,7 @@
 /*
-Title: proj1.cpp
+Title: SpotTheDifference.cpp
 Author: Shariq Moghees
-Date: 9-26-24
-Section: 22
-E-mail: shariqm1@umbc.edu
+Date: 10-3-24
 
 Desc: A program that runs a "Spot the Difference" game using ASCII art.
 The user loads a file using commands from the menu, and then can play the game.
@@ -16,6 +14,8 @@ The player must guess the correct row and column of the changed character to win
 #include <fstream>
 #include <cmath>
 #include <string>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
@@ -56,11 +56,11 @@ void displayArt(char charArr[ROWS][COLS]){
 -The printed array displays the original picture with coordinate labels
 */
     //column coordinates
-    cout << "  0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20" << endl;
+    cout << "   0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20" << endl;
     for (int r = 0; r < ROWS; r++) {
         cout << r; //row coordinates
         for (int c = 0; c < COLS; c++) {
-            cout << " " << charArr[r][c];  // Print each character in the row
+            cout << "  " << charArr[r][c];  // Print each character in the row
         }
         cout << endl;  // Move to the next line after printing the row
     }
@@ -100,17 +100,17 @@ bool isGuessRight(char origArr[ROWS][COLS], char copyArr[ROWS][COLS]){
 -Return T/F for whether the user guessed the correct coordinate
 */
     int r, c; 
-    cout << "Guess the row of the changed character" << endl;
+    cout << "What row is the change in?" << endl;
     cin >> r;
-    cout << "Guess the column of the changed character" << endl;
+    cout << "What column is the change in?" << endl;
     cin >> c;
 
     //input validation
     while (r < 0 || r >= ROWS || c < 0 || c >= COLS){
         cout << "invalid input for row and/or column" << endl;
-        cout << "Guess the row of the changed character" << endl;
+        cout << "What row is the change in?" << endl;
         cin >> r;
-        cout << "Guess the column of the changed character" << endl;
+        cout << "What column is the change in?" << endl;
         cin >> c;
     }
 
@@ -131,6 +131,32 @@ void playGame(char charArr[ROWS][COLS]){
 -Calls guessChange until the player guesses correctly
 -goes back to menu
 */
+    //declares and initializes the dupe array with the original
+    char copyArr[ROWS][COLS]; 
+    for(int r = 0; r < ROWS; r++){
+        for(int c = 0; c < COLS; c++){
+            copyArr[r][c] = charArr[r][c];
+        }
+    }
+
+    //setting a radom coordinate to change
+    int randRow = rand() % ROWS;
+    int randCol = rand() % COLS;
+    // setting a random character to fill that random coordinate between ASCI values of 33-126
+    char randChar;
+    do{
+        randChar = rand() % 94 + 33;
+    }while(randChar == charArr[randRow][randCol]);
+    copyArr[randRow][randCol] = randChar;
+    //display both original and dupe arrays. 
+    displayArt(charArr);
+    displayArt(copyArr);
+    //user keeps guessing the location of the changed character until they get it right.
+    while (!isGuessRight(charArr,copyArr)){
+        cout << "That is incorrect!" << endl;
+    }
+    //win condition message
+    cout << "You are correct!" << endl;
 }
 
 int main(){
@@ -143,6 +169,7 @@ int main(){
     }
 
     bool isRunning = true;
+    srand(time(0)); //primes the rand function
 
     while(isRunning){
         //main menu logic
@@ -159,25 +186,30 @@ int main(){
             case 1: //Load a file into the charArr
                 clearArray(charArr); //ensure array is empty before loading a new file.
                 loadFile(charArr);
+                cout << "\n" << endl;
                 break;
             case 2: //displays the loaded file on a coordinate grid
                 if (isFileLoaded(charArr)){
                     displayArt(charArr);
+                    cout << "\n" << endl;
+
                 }
                 else{
-                    cout << "No file loaded." << endl;
+                    cout << "No file loaded.\n" << endl;
                 }
                 break;
             case 3: //begins the process the play the game of 'Spot-the-Difference'
                 if (isFileLoaded(charArr)){
                     playGame(charArr);
                     clearArray(charArr); //clear the array after the game is over to load a new one in. 
+                    cout << "\n" << endl;
                 }
                 else{
-                    cout << "No file loaded." << endl;
+                    cout << "No file loaded.\n" << endl;
                 }
-                break;
+                break; 
             case 4: //exit program
+                cout << "Thank you for playing the Spot the Difference Game\n" << endl;
                 isRunning = false;
                 break;
                 
